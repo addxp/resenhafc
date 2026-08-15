@@ -67,14 +67,8 @@ export default async function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center mt-2">
             <Link
-              href="/loja"
-              className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
-            >
-              Visitar a loja
-            </Link>
-            <Link
               href="/jogador"
-              className="px-5 py-2.5 rounded-lg border border-primary text-primary font-medium hover:bg-sand-100 transition-colors"
+              className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
             >
               Área dos jogadores
             </Link>

@@ -49,3 +49,20 @@ export interface Player {
   bio: string | null;
   active: boolean;
 }
+
+export type AlbumCategory =
+  | "treinos"
+  | "jogos"
+  | "campeonatos"
+  | "eventos"
+  | "jogadores";
+
+export interface Album {
+  id: string;
+  title: string;
+  category: AlbumCategory;
+  description: string | null;
+  cover_url: string | null;
+  player_id: string | null;
+  created_at: string;
+}

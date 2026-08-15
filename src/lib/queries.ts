@@ -83,3 +83,44 @@ export async function getCurrentUser() {
   } = await supabase.auth.getUser();
   return user;
 }
+
+// ---------- Álbuns e mídia ----------
+
+export async function getAlbums() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("albums")
+    .select("*, players(name), media(count)")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export async function getAlbumById(id: string) {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("albums")
+    .select("*, players(name)")
+    .eq("id", id)
+    .single();
+  return data;
+}
+
+export async function getAlbumMedia(albumId: string) {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("media")
+    .select("*")
+    .eq("album_id", albumId)
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export async function getActivePlayers() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("players")
+    .select("id, name, jersey_number")
+    .eq("active", true)
+    .order("name");
+  return data ?? [];
+}

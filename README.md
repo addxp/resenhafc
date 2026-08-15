@@ -9,7 +9,8 @@ Stack: **Next.js (App Router) + TypeScript + Tailwind + Supabase (Auth, Postgres
 
 - [x] **Fase 1 — Fundação**: estrutura do projeto, schema do banco, autenticação com 3 níveis (admin/jogador/cliente), proteção de rotas
 - [x] **Fase 2 — Site institucional**: home completa (banner, próximos jogos, resultados, notícias, fotos), listagem e página de notícia, galeria pública
-- [ ] Fase 3 — Loja (catálogo, carrinho, checkout, estoque)
+- [x] **Fase 3 — Nuvem de mídia**: álbuns organizados por jogador, treino, jogo, campeonato e evento, upload/exclusão de fotos e vídeos pelo admin
+- [ ] Loja (adiada por enquanto — o time ainda não vende camisas)
 - [ ] Fase 4 — Área dos jogadores (perfil completo, mídias individuais)
 - [ ] Fase 5 — Nuvem de mídia + álbuns
 - [ ] Fase 6 — Painel administrativo completo
@@ -23,8 +24,9 @@ npm install
 
 ### 2. Criar o projeto no Supabase
 1. Crie uma conta/projeto em https://supabase.com
-2. No **SQL Editor**, cole e execute o conteúdo de `supabase/schema.sql`
-   (cria todas as tabelas, os buckets de Storage e as políticas de segurança)
+2. No **SQL Editor**, cole e execute, nesta ordem:
+   - `supabase/schema.sql` (tabelas, buckets de Storage e políticas de segurança)
+   - `supabase/phase3_media_albums.sql` (permite vincular um álbum a um jogador)
 3. Em **Project Settings > API**, copie a `Project URL`, a `anon public key` e a `service_role key`
 
 ### 3. Configurar variáveis de ambiente
@@ -91,3 +93,17 @@ pelo painel administrativo (Fase 6), que cria o usuário no Supabase Auth e já 
 
 Jogadores desativados (que saíram do time) mantêm `players.active = false`, preservando
 histórico e mídias — nada é apagado automaticamente.
+
+## Nuvem de mídia (álbuns por jogador/treino)
+
+Em `/admin/midia`, o admin pode criar álbuns em 5 categorias: jogadores, treinos, jogos,
+campeonatos e eventos. Cada álbum vira uma "pasta" dentro do bucket `media` do Supabase
+Storage, no caminho `<categoria>/<id-do-album>/arquivo`. Fotos e vídeos podem ser
+enviados em lote e excluídos individualmente.
+
+Para criar um álbum na categoria "Jogadores", é preciso existir pelo menos um jogador
+na tabela `players` — o cadastro de jogadores pela interface do admin ainda não foi
+construído (vem numa próxima fase). Por enquanto, insira jogadores de teste direto
+pelo Table Editor do Supabase, preenchendo `profile_id` com o `id` de algum usuário
+já cadastrado. Para as demais categorias não precisa de jogador — é só criar o álbum
+com um nome livre (ex: "Treino 14/08") e enviar os arquivos.
