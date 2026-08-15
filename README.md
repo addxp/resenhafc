@@ -8,7 +8,7 @@ Stack: **Next.js (App Router) + TypeScript + Tailwind + Supabase (Auth, Postgres
 ## Status do projeto
 
 - [x] **Fase 1 — Fundação**: estrutura do projeto, schema do banco, autenticação com 3 níveis (admin/jogador/cliente), proteção de rotas
-- [ ] Fase 2 — Site institucional (home completa, notícias, galeria pública)
+- [x] **Fase 2 — Site institucional**: home completa (banner, próximos jogos, resultados, notícias, fotos), listagem e página de notícia, galeria pública
 - [ ] Fase 3 — Loja (catálogo, carrinho, checkout, estoque)
 - [ ] Fase 4 — Área dos jogadores (perfil completo, mídias individuais)
 - [ ] Fase 5 — Nuvem de mídia + álbuns
@@ -41,6 +41,12 @@ update public.profiles
 set role = 'admin'
 where id = (select id from auth.users where email = 'seu-email@exemplo.com');
 ```
+
+### 5. (Opcional) Inserir dados de teste
+A home busca jogos, notícias e fotos direto do banco — sem cadastrar nada, ela aparece
+vazia (com as mensagens "nenhum jogo/notícia/foto ainda"). Para ver com conteúdo, insira
+algumas linhas de teste nas tabelas `games` e `news` pelo Table Editor do Supabase, ou
+aguarde a Fase 6 (painel administrativo), quando isso será feito pela interface.
 
 ### 5. Rodar o projeto
 ```bash
