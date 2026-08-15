@@ -85,6 +85,3 @@ pelo painel administrativo (Fase 6), que cria o usuário no Supabase Auth e já 
 
 Jogadores desativados (que saíram do time) mantêm `players.active = false`, preservando
 histórico e mídias — nada é apagado automaticamente.
-# resenhafc
-# resenhafc
-# resenhafc

@@ -8,14 +8,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Cores do time — ajuste para a identidade visual do Resenha FC
+        // Paleta inspirada na cor da camisa do time (tom de areia)
+        sand: {
+          50: "#FBF8F2",
+          100: "#F5EEE0",
+          200: "#EBE0C8",
+          300: "#DFCDA8",
+          400: "#D1B885",
+          500: "#C2A56A", // tom principal da camisa
+          600: "#A68851",
+          700: "#8A6E45",
+          800: "#6E5738",
+          900: "#59452D",
+        },
         primary: {
-          DEFAULT: "#0B3D2E",
-          light: "#146C43",
-          dark: "#062B1F",
+          DEFAULT: "#8A6E45", // sand-700 como cor de ação principal
+          light: "#C2A56A",
+          dark: "#59452D",
         },
         accent: {
-          DEFAULT: "#F2B705",
+          DEFAULT: "#0B3D2E", // verde escuro como contraste (opcional, pode remover)
         },
       },
     },
