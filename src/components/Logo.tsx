@@ -1,4 +1,5 @@
-import Image from "next/image";
+"use client";
+
 
 /**
  * Logo do Resenha FC.
