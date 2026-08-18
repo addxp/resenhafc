@@ -8,27 +8,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Paleta inspirada na cor da camisa do time (tom de areia)
+        // Tom de areia — cor da camisa do time
         sand: {
           50: "#FBF8F2",
           100: "#F5EEE0",
           200: "#EBE0C8",
           300: "#DFCDA8",
           400: "#D1B885",
-          500: "#C2A56A", // tom principal da camisa
+          500: "#C2A56A",
           600: "#A68851",
           700: "#8A6E45",
           800: "#6E5738",
-          900: "#59452D",
+          900: "#241C14",
         },
         primary: {
-          DEFAULT: "#8A6E45", // sand-700 como cor de ação principal
+          DEFAULT: "#8A6E45",
           light: "#C2A56A",
-          dark: "#59452D",
+          dark: "#241C14",
         },
-        accent: {
-          DEFAULT: "#0B3D2E", // verde escuro como contraste (opcional, pode remover)
+        // Verde escuro de quadra — usado com moderação, para placares e destaques
+        court: {
+          DEFAULT: "#1F3D33",
+          light: "#2E5C4C",
+          dark: "#132821",
         },
+        gold: "#D9A441",
+        ink: "#241C14",
+      },
+      fontFamily: {
+        display: ["var(--font-display)"],
+        body: ["var(--font-body)"],
+        mono: ["var(--font-mono)"],
       },
     },
   },

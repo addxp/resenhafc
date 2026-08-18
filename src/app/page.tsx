@@ -13,31 +13,65 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
+  });
+}
+
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
   });
 }
 
-function GameCard({ game }: { game: Game }) {
-  const played = game.status === "realizado";
+// Elemento de assinatura da home: um placar no estilo marcador eletrônico
+// de quadra, para o próximo jogo — em vez de mais um card genérico.
+function NextMatchScoreboard({ game }: { game: Game | null }) {
   return (
-    <div className="bg-white border border-sand-200 rounded-xl p-4 shadow-sm">
-      <p className="text-xs text-gray-500">{formatDate(game.match_date)}</p>
-      <p className="font-semibold text-primary mt-1">
-        Resenha FC {game.is_home ? "x" : "@"} {game.opponent}
+    <div className="bg-court rounded-2xl px-6 py-5 sm:px-10 sm:py-7 text-sand-50 shadow-xl">
+      <p className="font-mono text-xs tracking-[0.3em] text-gold uppercase mb-3">
+        Próximo jogo
       </p>
-      {game.competition && (
-        <p className="text-xs text-gray-500">{game.competition}</p>
-      )}
-      {played ? (
-        <p className="text-2xl font-bold mt-2">
-          {game.home_score} <span className="text-gray-400 text-base">x</span>{" "}
-          {game.away_score}
-        </p>
+      {game ? (
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="font-mono">
+            <p className="text-2xl sm:text-3xl font-semibold">
+              RESENHA {game.is_home ? "x" : "@"} {game.opponent.toUpperCase()}
+            </p>
+            {game.competition && (
+              <p className="text-sand-300 text-sm mt-1">{game.competition}</p>
+            )}
+          </div>
+          <div className="font-mono text-right">
+            <p className="text-3xl sm:text-4xl text-gold font-semibold">
+              {formatDate(game.match_date)}
+            </p>
+            <p className="text-sand-300 text-sm">
+              {formatTime(game.match_date)} · {game.location ?? "local a definir"}
+            </p>
+          </div>
+        </div>
       ) : (
-        <p className="text-sm text-gray-600 mt-2">{game.location ?? "Local a definir"}</p>
+        <p className="font-mono text-sand-300">Nenhum jogo agendado no momento.</p>
       )}
+    </div>
+  );
+}
+
+function ResultCard({ game }: { game: Game }) {
+  return (
+    <div className="bg-white border border-sand-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+      <div>
+        <p className="text-xs text-ink/50 font-mono">{formatDate(game.match_date)}</p>
+        <p className="font-semibold text-ink mt-0.5">
+          Resenha FC {game.is_home ? "x" : "@"} {game.opponent}
+        </p>
+        {game.competition && <p className="text-xs text-ink/50">{game.competition}</p>}
+      </div>
+      <p className="font-mono text-2xl font-semibold text-court shrink-0 ml-3">
+        {game.home_score}
+        <span className="text-ink/30 text-base mx-1">x</span>
+        {game.away_score}
+      </p>
     </div>
   );
 }
@@ -50,29 +84,43 @@ export default async function HomePage() {
     getRecentMedia(8),
   ]);
 
+  const nextGame = upcoming[0] ?? null;
+  const otherUpcoming = upcoming.slice(1);
+
   return (
     <main>
       {/* BANNER */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-sand-200 via-sand-100 to-white">
+      <section className="relative overflow-hidden bg-gradient-to-b from-sand-300 via-sand-100 to-white">
         {/* Para usar uma foto real de banner, coloque o arquivo em public/banner.jpg
-            e troque a div de fundo abaixo por uma tag <Image src="/banner.jpg" ... /> */}
-        <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24 flex flex-col items-center text-center gap-5">
-          <Logo size={120} />
-          <h1 className="text-4xl sm:text-5xl font-black text-primary tracking-tight">
-            Resenha FC
+            e troque este gradiente por uma tag <Image src="/banner.jpg" fill ... /> */}
+        <div className="max-w-6xl mx-auto px-4 pt-14 pb-10 sm:pt-20 sm:pb-14 flex flex-col items-center text-center gap-5">
+          <Logo size={110} />
+          <h1 className="font-display text-5xl sm:text-7xl tracking-wide text-ink">
+            RESENHA FC
           </h1>
-          <p className="text-gray-700 max-w-xl">
+          <p className="text-ink/70 max-w-xl">
             Notícias, jogos, loja oficial e a área exclusiva dos jogadores — tudo em
             um só lugar.
           </p>
           <div className="flex flex-wrap gap-3 justify-center mt-2">
             <Link
-              href="/jogador"
+              href="/loja"
               className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
+            >
+              Comprar camisa
+            </Link>
+            <Link
+              href="/jogador"
+              className="px-5 py-2.5 rounded-lg border border-primary text-primary font-medium hover:bg-sand-100 transition-colors"
             >
               Área dos jogadores
             </Link>
           </div>
+        </div>
+
+        {/* Placar do próximo jogo — elemento de assinatura */}
+        <div className="max-w-6xl mx-auto px-4 pb-14 sm:pb-16">
+          <NextMatchScoreboard game={nextGame} />
         </div>
       </section>
 
@@ -80,26 +128,32 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid sm:grid-cols-2 gap-8">
           <div>
-            <h2 className="text-xl font-bold text-primary mb-4">Próximos jogos</h2>
-            {upcoming.length === 0 ? (
-              <p className="text-gray-500 text-sm">Nenhum jogo agendado no momento.</p>
+            <h2 className="font-display text-2xl tracking-wide text-ink mb-4">
+              PRÓXIMOS JOGOS
+            </h2>
+            {otherUpcoming.length === 0 ? (
+              <p className="text-ink/50 text-sm">
+                {nextGame ? "Sem outros jogos agendados por enquanto." : "Nenhum jogo agendado no momento."}
+              </p>
             ) : (
               <div className="flex flex-col gap-3">
-                {upcoming.map((g) => (
-                  <GameCard key={g.id} game={g} />
+                {otherUpcoming.map((g) => (
+                  <ResultCard key={g.id} game={g} />
                 ))}
               </div>
             )}
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-primary mb-4">Últimos resultados</h2>
+            <h2 className="font-display text-2xl tracking-wide text-ink mb-4">
+              ÚLTIMOS RESULTADOS
+            </h2>
             {results.length === 0 ? (
-              <p className="text-gray-500 text-sm">Nenhum resultado registrado ainda.</p>
+              <p className="text-ink/50 text-sm">Nenhum resultado registrado ainda.</p>
             ) : (
               <div className="flex flex-col gap-3">
                 {results.map((g) => (
-                  <GameCard key={g.id} game={g} />
+                  <ResultCard key={g.id} game={g} />
                 ))}
               </div>
             )}
@@ -111,14 +165,14 @@ export default async function HomePage() {
       <section className="bg-sand-50 py-12">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-primary">Notícias</h2>
+            <h2 className="font-display text-2xl tracking-wide text-ink">NOTÍCIAS</h2>
             <Link href="/noticias" className="text-sm text-primary underline">
               Ver todas
             </Link>
           </div>
 
           {news.length === 0 ? (
-            <p className="text-gray-500 text-sm">Nenhuma notícia publicada ainda.</p>
+            <p className="text-ink/50 text-sm">Nenhuma notícia publicada ainda.</p>
           ) : (
             <div className="grid sm:grid-cols-3 gap-5">
               {news.map((n) => (
@@ -138,7 +192,7 @@ export default async function HomePage() {
                     )}
                   </div>
                   <div className="p-4">
-                    <p className="text-xs text-gray-500">{formatDate(n.created_at)}</p>
+                    <p className="text-xs text-ink/50 font-mono">{formatDate(n.created_at)}</p>
                     <p className="font-semibold mt-1 line-clamp-2">{n.title}</p>
                   </div>
                 </Link>
@@ -151,14 +205,14 @@ export default async function HomePage() {
       {/* FOTOS RECENTES */}
       <section className="max-w-6xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-primary">Fotos recentes</h2>
+          <h2 className="font-display text-2xl tracking-wide text-ink">FOTOS RECENTES</h2>
           <Link href="/galeria" className="text-sm text-primary underline">
             Ver galeria
           </Link>
         </div>
 
         {photos.length === 0 ? (
-          <p className="text-gray-500 text-sm">Nenhuma foto publicada ainda.</p>
+          <p className="text-ink/50 text-sm">Nenhuma foto publicada ainda.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {photos.map((m) => (
