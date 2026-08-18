@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/Logo";
 
 // Cadastro público = sempre cria um usuário com role "cliente"
 // (contas de admin/jogador só são criadas pelo painel administrativo).
 export default function RegisterPage() {
+  const router = useRouter();
   const supabase = createClient();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [pendingConfirmation, setPendingConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleRegister(e: React.FormEvent) {
@@ -21,7 +23,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -37,10 +39,19 @@ export default function RegisterPage() {
       return;
     }
 
-    setDone(true);
+    // Com a confirmação de e-mail desativada no Supabase, o cadastro já
+    // vem com sessão ativa — entra direto. Se a confirmação for reativada
+    // no futuro, "session" vem nula e mostramos o aviso de verificar e-mail.
+    if (data.session) {
+      router.push("/");
+      router.refresh();
+      return;
+    }
+
+    setPendingConfirmation(true);
   }
 
-  if (done) {
+  if (pendingConfirmation) {
     return (
       <main className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-b from-sand-100 via-sand-50 to-white text-center">
         <div className="w-full max-w-sm">

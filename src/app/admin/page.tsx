@@ -23,6 +23,16 @@ export default async function AdminPage() {
             Álbuns por jogador, treinos, jogos, campeonatos e eventos.
           </p>
         </Link>
+
+        <Link
+          href="/admin/patrocinios"
+          className="bg-white border border-sand-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+        >
+          <p className="font-semibold text-primary">Propostas de patrocínio</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Pedidos recebidos pelo formulário público.
+          </p>
+        </Link>
       </div>
     </main>
   );

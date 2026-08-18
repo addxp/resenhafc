@@ -107,3 +107,12 @@ construído (vem numa próxima fase). Por enquanto, insira jogadores de teste di
 pelo Table Editor do Supabase, preenchendo `profile_id` com o `id` de algum usuário
 já cadastrado. Para as demais categorias não precisa de jogador — é só criar o álbum
 com um nome livre (ex: "Treino 14/08") e enviar os arquivos.
+
+## Formulário de patrocínio
+
+Página pública em `/patrocinio` — qualquer visitante pode enviar uma proposta,
+sem precisar de login. Os pedidos ficam em `/admin/patrocinios`, visível só pro
+admin, com um seletor de status (Novo / Em conversa / Fechado / Recusado).
+
+Antes de usar, rode `supabase/phase_sponsorship.sql` no SQL Editor do Supabase
+(depois do `schema.sql`).

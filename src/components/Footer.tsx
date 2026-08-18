@@ -22,6 +22,7 @@ export function Footer() {
             <a href="/noticias" className="hover:underline">Notícias</a>
             <a href="/galeria" className="hover:underline">Galeria</a>
             <a href="/loja" className="hover:underline">Loja</a>
+            <a href="/patrocinio" className="hover:underline">Seja patrocinador</a>
           </div>
         </div>
       </div>
