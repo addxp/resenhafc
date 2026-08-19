@@ -138,3 +138,14 @@ Passo a passo:
 Havia dois jogadores chamados "Gustavo" na sua lista (além do "Gustavo Rexona") —
 cadastrei como "Gustavo" e "Gustavo (2)" para não colidir. Se forem a mesma pessoa,
 me avise para eu corrigir.
+
+## Privacidade das fotos
+
+- **Treinos**: público — qualquer visitante do site vê, mesmo sem login
+- **Jogadores** (fotos pessoais de cada um): privado — só usuários logados com
+  role `jogador` ou `admin` conseguem ver. Um visitante comum ou cliente da loja
+  não vê essas fotos, nem elas aparecem na galeria pública
+- **Jogos, Campeonatos, Eventos**: público, sem mudança
+
+Rode `supabase/phase_media_privacy.sql` no SQL Editor do Supabase para aplicar
+essa regra (precisa já ter rodado o `schema.sql` antes).
