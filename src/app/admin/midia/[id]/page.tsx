@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/roles";
 import { getAlbumById, getAlbumMedia } from "@/lib/queries";
 import { MediaUploader } from "@/components/MediaUploader";
-import { DeleteMediaButton } from "@/components/DeleteMediaButton";
+import { PhotoGrid } from "@/components/PhotoGrid";
 
 export default async function AlbumPage({ params }: { params: { id: string } }) {
   const profile = await requireRole(["admin"]);
@@ -22,6 +22,9 @@ export default async function AlbumPage({ params }: { params: { id: string } }) 
           {(album as any).players?.name ? ` — ${(album as any).players.name}` : ""}
         </h1>
         {album.description && <p className="text-gray-500 mt-1">{album.description}</p>}
+        <p className="text-xs text-gray-400 mt-1">
+          Clique em uma foto ou vídeo para ampliar e baixar.
+        </p>
       </div>
 
       <div className="mb-8">
@@ -32,30 +35,7 @@ export default async function AlbumPage({ params }: { params: { id: string } }) 
         />
       </div>
 
-      {media.length === 0 ? (
-        <p className="text-gray-400 text-sm">Nenhum arquivo enviado ainda.</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {media.map((m) => (
-            <div
-              key={m.id}
-              className="group relative aspect-square bg-sand-200 rounded-lg overflow-hidden"
-            >
-              {m.type === "video" ? (
-                <video src={m.url} className="w-full h-full object-cover" controls />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={m.url}
-                  alt={m.caption ?? album.title}
-                  className="w-full h-full object-cover"
-                />
-              )}
-              <DeleteMediaButton mediaId={m.id} storagePath={m.storage_path} />
-            </div>
-          ))}
-        </div>
-      )}
+      <PhotoGrid media={media} albumTitle={album.title} showDelete />
     </main>
   );
 }

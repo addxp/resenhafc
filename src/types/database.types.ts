@@ -33,9 +33,11 @@ export interface MediaItem {
   id: string;
   type: MediaType;
   url: string;
+  storage_path: string;
   caption: string | null;
   created_at: string;
   album_id: string | null;
+  player_id: string | null;
 }
 
 export type PlayerPosition = "goleiro" | "fixo" | "ala" | "pivo";

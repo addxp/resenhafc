@@ -116,3 +116,25 @@ admin, com um seletor de status (Novo / Em conversa / Fechado / Recusado).
 
 Antes de usar, rode `supabase/phase_sponsorship.sql` no SQL Editor do Supabase
 (depois do `schema.sql`).
+
+## Código de jogador (cadastro sem admin manual)
+
+Cada jogador do elenco é pré-cadastrado com um código único de 6 caracteres, ANTES
+de ter conta no site. No cadastro público (`/register`), tem um campo opcional
+"Código de jogador" — quem preencher corretamente já entra vinculado ao jogador
+certo, com a role certa (jogador, ou admin se o código for de admin/jogador).
+
+Passo a passo:
+1. Rode `supabase/phase_player_codes.sql` no SQL Editor (depois do `schema.sql`
+   e do `phase3_media_albums.sql`) — ele já pré-cadastra o elenco atual
+2. O próprio arquivo termina com um `SELECT` que lista nome + código de cada
+   jogador. Rode esse SELECT (ou reabra a aba de resultados) pra copiar os códigos
+3. Envie o código individual de cada jogador por WhatsApp — ele usa esse código
+   na hora de criar a conta em `/register`
+4. A pasta de mídia de cada jogador já foi criada automaticamente no passo 1
+   (gatilho existente desde a Fase de nuvem de mídia), então o fotógrafo já pode
+   subir fotos mesmo antes do jogador se cadastrar
+
+Havia dois jogadores chamados "Gustavo" na sua lista (além do "Gustavo Rexona") —
+cadastrei como "Gustavo" e "Gustavo (2)" para não colidir. Se forem a mesma pessoa,
+me avise para eu corrigir.

@@ -23,11 +23,42 @@ function formatTime(iso: string) {
   });
 }
 
+function SectionHeading({
+  eyebrow,
+  title,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  action?: { href: string; label: string };
+}) {
+  return (
+    <div className="flex items-end justify-between mb-6">
+      <div>
+        <p className="font-mono text-xs tracking-[0.25em] text-primary/70 uppercase mb-1">
+          {eyebrow}
+        </p>
+        <h2 className="font-display text-2xl sm:text-3xl tracking-wide text-ink">
+          {title}
+        </h2>
+      </div>
+      {action && (
+        <Link
+          href={action.href}
+          className="text-sm text-primary underline underline-offset-4 hover:text-primary-dark transition-colors shrink-0"
+        >
+          {action.label}
+        </Link>
+      )}
+    </div>
+  );
+}
+
 // Elemento de assinatura da home: um placar no estilo marcador eletrônico
-// de quadra, para o próximo jogo — em vez de mais um card genérico.
+// de quadra, para o próximo jogo.
 function NextMatchScoreboard({ game }: { game: Game | null }) {
   return (
-    <div className="bg-court rounded-2xl px-6 py-5 sm:px-10 sm:py-7 text-sand-50 shadow-xl">
+    <div className="bg-court rounded-2xl px-6 py-5 sm:px-10 sm:py-7 text-sand-50 shadow-2xl">
       <p className="font-mono text-xs tracking-[0.3em] text-gold uppercase mb-3">
         Próximo jogo
       </p>
@@ -58,8 +89,9 @@ function NextMatchScoreboard({ game }: { game: Game | null }) {
 }
 
 function ResultCard({ game }: { game: Game }) {
+  const played = game.status === "realizado";
   return (
-    <div className="bg-white border border-sand-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+    <div className="bg-white border border-sand-200 rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-between">
       <div>
         <p className="text-xs text-ink/50 font-mono">{formatDate(game.match_date)}</p>
         <p className="font-semibold text-ink mt-0.5">
@@ -67,11 +99,17 @@ function ResultCard({ game }: { game: Game }) {
         </p>
         {game.competition && <p className="text-xs text-ink/50">{game.competition}</p>}
       </div>
-      <p className="font-mono text-2xl font-semibold text-court shrink-0 ml-3">
-        {game.home_score}
-        <span className="text-ink/30 text-base mx-1">x</span>
-        {game.away_score}
-      </p>
+      {played ? (
+        <p className="font-mono text-2xl font-semibold text-court shrink-0 ml-3">
+          {game.home_score}
+          <span className="text-ink/30 text-base mx-1">x</span>
+          {game.away_score}
+        </p>
+      ) : (
+        <span className="font-mono text-xs bg-sand-100 text-primary px-2.5 py-1 rounded-full shrink-0 ml-3">
+          {formatTime(game.match_date)}
+        </span>
+      )}
     </div>
   );
 }
@@ -91,27 +129,37 @@ export default async function HomePage() {
     <main>
       {/* BANNER */}
       <section className="relative overflow-hidden bg-gradient-to-b from-sand-300 via-sand-100 to-white">
+        {/* Textura sutil de bolinhas — reforça o clima esportivo sem pesar */}
+        <div
+          className="absolute inset-0 opacity-[0.07] pointer-events-none"
+          style={{
+            backgroundImage: "radial-gradient(currentColor 1.5px, transparent 1.5px)",
+            backgroundSize: "18px 18px",
+            color: "#241C14",
+          }}
+        />
+
         {/* Para usar uma foto real de banner, coloque o arquivo em public/banner.jpg
             e troque este gradiente por uma tag <Image src="/banner.jpg" fill ... /> */}
-        <div className="max-w-6xl mx-auto px-4 pt-14 pb-10 sm:pt-20 sm:pb-14 flex flex-col items-center text-center gap-5">
-          <Logo size={110} />
+        <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-10 sm:pt-24 sm:pb-14 flex flex-col items-center text-center gap-5">
+          <Logo size={120} />
           <h1 className="font-display text-5xl sm:text-7xl tracking-wide text-ink">
             RESENHA FC
           </h1>
-          <p className="text-ink/70 max-w-xl">
+          <p className="text-ink/70 max-w-xl text-lg">
             Notícias, jogos, loja oficial e a área exclusiva dos jogadores — tudo em
             um só lugar.
           </p>
           <div className="flex flex-wrap gap-3 justify-center mt-2">
             <Link
               href="/loja"
-              className="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
+              className="px-6 py-3 rounded-lg bg-primary text-white font-medium shadow-lg shadow-primary/20 hover:bg-primary-dark hover:-translate-y-0.5 transition-all"
             >
               Comprar camisa
             </Link>
             <Link
               href="/jogador"
-              className="px-5 py-2.5 rounded-lg border border-primary text-primary font-medium hover:bg-sand-100 transition-colors"
+              className="px-6 py-3 rounded-lg border-2 border-primary text-primary font-medium hover:bg-sand-100 hover:-translate-y-0.5 transition-all"
             >
               Área dos jogadores
             </Link>
@@ -119,21 +167,21 @@ export default async function HomePage() {
         </div>
 
         {/* Placar do próximo jogo — elemento de assinatura */}
-        <div className="max-w-6xl mx-auto px-4 pb-14 sm:pb-16">
+        <div className="relative max-w-6xl mx-auto px-4 pb-14 sm:pb-16">
           <NextMatchScoreboard game={nextGame} />
         </div>
       </section>
 
       {/* PRÓXIMOS JOGOS E RESULTADOS */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid sm:grid-cols-2 gap-8">
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <div className="grid sm:grid-cols-2 gap-10">
           <div>
-            <h2 className="font-display text-2xl tracking-wide text-ink mb-4">
-              PRÓXIMOS JOGOS
-            </h2>
+            <SectionHeading eyebrow="Agenda" title="Próximos jogos" />
             {otherUpcoming.length === 0 ? (
               <p className="text-ink/50 text-sm">
-                {nextGame ? "Sem outros jogos agendados por enquanto." : "Nenhum jogo agendado no momento."}
+                {nextGame
+                  ? "Sem outros jogos agendados por enquanto."
+                  : "Nenhum jogo agendado no momento."}
               </p>
             ) : (
               <div className="flex flex-col gap-3">
@@ -145,9 +193,7 @@ export default async function HomePage() {
           </div>
 
           <div>
-            <h2 className="font-display text-2xl tracking-wide text-ink mb-4">
-              ÚLTIMOS RESULTADOS
-            </h2>
+            <SectionHeading eyebrow="Retrospecto" title="Últimos resultados" />
             {results.length === 0 ? (
               <p className="text-ink/50 text-sm">Nenhum resultado registrado ainda.</p>
             ) : (
@@ -162,38 +208,36 @@ export default async function HomePage() {
       </section>
 
       {/* NOTÍCIAS */}
-      <section className="bg-sand-50 py-12">
+      <section className="bg-sand-50 py-16 border-y border-sand-200">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-2xl tracking-wide text-ink">NOTÍCIAS</h2>
-            <Link href="/noticias" className="text-sm text-primary underline">
-              Ver todas
-            </Link>
-          </div>
+          <SectionHeading eyebrow="Fica por dentro" title="Notícias" action={{ href: "/noticias", label: "Ver todas" }} />
 
           {news.length === 0 ? (
             <p className="text-ink/50 text-sm">Nenhuma notícia publicada ainda.</p>
           ) : (
-            <div className="grid sm:grid-cols-3 gap-5">
+            <div className="grid sm:grid-cols-3 gap-6">
               {news.map((n) => (
                 <Link
                   key={n.id}
                   href={`/noticias/${n.slug}`}
-                  className="bg-white rounded-xl overflow-hidden border border-sand-200 shadow-sm hover:shadow-md transition-shadow"
+                  className="group bg-white rounded-2xl overflow-hidden border border-sand-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
                 >
-                  <div className="aspect-video bg-sand-200 relative">
+                  <div className="aspect-video bg-sand-200 relative overflow-hidden">
                     {n.cover_url && (
                       <Image
                         src={n.cover_url}
                         alt={n.title}
                         fill
-                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     )}
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-ink/50 font-mono">{formatDate(n.created_at)}</p>
-                    <p className="font-semibold mt-1 line-clamp-2">{n.title}</p>
+                    <p className="font-semibold mt-1 line-clamp-2 group-hover:text-primary transition-colors">
+                      {n.title}
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -203,13 +247,8 @@ export default async function HomePage() {
       </section>
 
       {/* FOTOS RECENTES */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-2xl tracking-wide text-ink">FOTOS RECENTES</h2>
-          <Link href="/galeria" className="text-sm text-primary underline">
-            Ver galeria
-          </Link>
-        </div>
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <SectionHeading eyebrow="Bastidores" title="Fotos recentes" action={{ href: "/galeria", label: "Ver galeria" }} />
 
         {photos.length === 0 ? (
           <p className="text-ink/50 text-sm">Nenhuma foto publicada ainda.</p>
@@ -218,13 +257,39 @@ export default async function HomePage() {
             {photos.map((m) => (
               <div
                 key={m.id}
-                className="aspect-square bg-sand-200 rounded-lg overflow-hidden relative"
+                className="group aspect-square bg-sand-200 rounded-xl overflow-hidden relative shadow-sm"
               >
-                <Image src={m.url} alt={m.caption ?? "Foto do Resenha FC"} fill className="object-cover" />
+                <Image
+                  src={m.url}
+                  alt={m.caption ?? "Foto do Resenha FC"}
+                  fill
+                  sizes="(max-width: 640px) 50vw, 25vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
             ))}
           </div>
         )}
+      </section>
+
+      {/* CHAMADA PARA PATROCÍNIO */}
+      <section className="bg-ink py-14">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div>
+            <p className="font-mono text-xs tracking-[0.25em] text-gold uppercase mb-1">
+              Apoie o time
+            </p>
+            <h2 className="font-display text-2xl sm:text-3xl tracking-wide text-sand-50">
+              QUER SER PATROCINADOR?
+            </h2>
+          </div>
+          <Link
+            href="/patrocinio"
+            className="px-6 py-3 rounded-lg bg-gold text-ink font-medium hover:brightness-95 hover:-translate-y-0.5 transition-all shrink-0"
+          >
+            Enviar proposta
+          </Link>
+        </div>
       </section>
     </main>
   );
