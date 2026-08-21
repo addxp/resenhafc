@@ -124,3 +124,58 @@ export async function getActivePlayers() {
     .order("name");
   return data ?? [];
 }
+
+// ---------- Loja ----------
+
+export async function getActiveProducts() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .eq("active", true)
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export async function getAllProducts() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export async function getProductById(id: string) {
+  const supabase = createClient();
+  const { data } = await supabase.from("products").select("*").eq("id", id).single();
+  return data;
+}
+
+export async function getOrderById(id: string) {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("orders")
+    .select("*, order_items(*, products(name, images))")
+    .eq("id", id)
+    .single();
+  return data;
+}
+
+export async function getMyOrders() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("orders")
+    .select("*, order_items(*)")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+export async function getAllOrders() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("orders")
+    .select("*, profiles(full_name), order_items(*, products(name))")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}

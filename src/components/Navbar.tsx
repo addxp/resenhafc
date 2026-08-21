@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { getCurrentUser } from "@/lib/queries";
+import { CartBadge } from "@/components/CartBadge";
 
 const INSTAGRAM_URL = "https://www.instagram.com/resenhafc_mucambo/";
 
@@ -37,6 +38,7 @@ export async function Navbar() {
           <Link href="/loja" className="text-ink/70 hover:text-primary transition-colors">
             Loja
           </Link>
+          <CartBadge />
           <Link href="/jogador" className="text-ink/70 hover:text-primary transition-colors hidden sm:inline">
             Área do jogador
           </Link>

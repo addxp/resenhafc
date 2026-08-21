@@ -68,3 +68,50 @@ export interface Album {
   player_id: string | null;
   created_at: string;
 }
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  images: string[];
+  sizes: string[];
+  stock: Record<string, number>;
+  active: boolean;
+  created_at: string;
+}
+
+export type OrderStatus =
+  | "pendente"
+  | "pago"
+  | "preparando"
+  | "enviado"
+  | "concluido"
+  | "cancelado";
+
+export type PaymentMethod = "pix" | "cartao" | "dinheiro";
+export type PaymentStatus = "pendente" | "aprovado" | "recusado" | "reembolsado";
+
+export interface Order {
+  id: string;
+  customer_id: string;
+  status: OrderStatus;
+  payment_method: PaymentMethod | null;
+  payment_status: PaymentStatus;
+  mercadopago_payment_id: string | null;
+  pix_qr_code: string | null;
+  pix_copy_paste: string | null;
+  pix_expires_at: string | null;
+  total: number;
+  shipping_address: Record<string, string> | null;
+  created_at: string;
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  size: string;
+  quantity: number;
+  unit_price: number;
+}

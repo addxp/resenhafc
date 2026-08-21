@@ -149,3 +149,38 @@ me avise para eu corrigir.
 
 Rode `supabase/phase_media_privacy.sql` no SQL Editor do Supabase para aplicar
 essa regra (precisa já ter rodado o `schema.sql` antes).
+
+## Loja (camisas, Pix automático e dinheiro)
+
+Antes de usar, rode `supabase/phase_loja.sql` no SQL Editor do Supabase — **atenção**:
+a primeira linha (`ALTER TYPE ... ADD VALUE`) precisa ser rodada sozinha, clicar em
+"Run", e só depois colar o resto do arquivo (o Postgres não deixa usar um valor novo
+de enum na mesma transação em que ele foi criado).
+
+### Configurar o Mercado Pago (Pix automático)
+1. Crie uma conta em https://www.mercadopago.com.br (pessoa física, só com CPF)
+2. Vá em **Seu negócio > Configurações > Credenciais** (ou "Developers > Suas integrações")
+3. Copie o **Access Token** (use o de teste primeiro para validar, depois troque
+   pelo de produção) e cole em `MERCADOPAGO_ACCESS_TOKEN` no `.env.local` — e
+   também nas variáveis de ambiente da Vercel
+4. Configure `NEXT_PUBLIC_SITE_URL` com a URL pública do site (a da Vercel em
+   produção) — é para lá que o Mercado Pago manda a confirmação automática do
+   pagamento (webhook em `/api/webhooks/mercadopago`)
+
+Testando localmente, o Mercado Pago não consegue chamar `localhost` — para testar
+o webhook na sua máquina, use uma ferramenta tipo `ngrok` para expor seu localhost
+com uma URL pública temporária, ou simplesmente teste direto no site já publicado
+na Vercel.
+
+### Como funciona
+- **Pix**: ao finalizar o pedido, o site gera um QR Code Pix na hora (Mercado Pago).
+  A página do pedido atualiza sozinha assim que o pagamento é confirmado — não
+  precisa de nada manual.
+- **Dinheiro**: o pedido é criado como "pendente" e o cliente já sabe que vai
+  combinar com você. Em `/admin/pedidos`, tem um botão "Marcar como pago" para
+  confirmar manualmente quando receber.
+- **Estoque**: é debitado automaticamente e de forma segura (não dá pra vender
+  mais do que existe, mesmo com dois pedidos ao mesmo tempo) assim que o pedido
+  é criado — não espera a confirmação do pagamento.
+- **Admin**: cadastra camisas com fotos, preço e estoque por tamanho em
+  `/admin/produtos`, e ativa/desativa produtos e ajusta estoque a qualquer hora.
